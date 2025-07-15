@@ -248,7 +248,7 @@ _dispatch_muxnote_dispose(dispatch_muxnote_t dmn)
 static void
 _dispatch_muxnote_retain(dispatch_muxnote_t dmn)
 {
-	uintptr_t refcount = os_atomic_inc(&dmn->dmn_refcount, relaxed);
+	uintptr_t refcount = os_atomic_inc(&dmn->dmn_refcount, seq_cst);
 	if (refcount == 0) {
 		DISPATCH_INTERNAL_CRASH(0, "muxnote refcount overflow");
 	}
@@ -260,7 +260,7 @@ _dispatch_muxnote_retain(dispatch_muxnote_t dmn)
 static void
 _dispatch_muxnote_release(dispatch_muxnote_t dmn)
 {
-	uintptr_t refcount = os_atomic_dec(&dmn->dmn_refcount, relaxed);
+	uintptr_t refcount = os_atomic_dec(&dmn->dmn_refcount, seq_cst);
 	if (refcount == 0) {
 		_dispatch_muxnote_dispose(dmn);
 	} else if (refcount == UINTPTR_MAX) {
